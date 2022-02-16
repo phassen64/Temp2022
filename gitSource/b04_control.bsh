@@ -1,0 +1,276 @@
+#!/bin/bash -f
+
+#   ****************************************************************************
+#   TUTORIAL BASH:control flow statements
+#   ****************************************************************************
+
+<< control
+    control flow statements
+        +   :01 if then-else-fi
+        +   :02 case-esac
+        +   :03 for do done
+        +   :04 while
+        +   :05 until
+control
+
+#   =*= :   include and init
+source LIB.inc.bsh
+v_EXE=$BASH_SOURCE; v_SCP=`basename $v_EXE`
+v_iEc=$1
+
+#   =*= :   header
+f_lib_header "$v_SCP" $LINENO $v_iEc; v_iEc=$?; v_iRc=$v_iEc
+
+#   =*= :   local integer
+declare -i i
+declare -i j
+declare -i m
+declare -i n
+
+#   =*= :   color test
+
+f_lib_menu "colortest" $LINENO
+
+f_lib_puts  "?Yellow" $v_COL_ID_yellow
+f_lib_print "?CyanColor" $v_LIBPRT_onNLonPx $v_COL_ID_cyan
+
+f_lib_print "eins;" $v_LIBPRT_noNLnoPx $v_COL_ID_cyan
+f_lib_print "zwei;" $v_LIBPRT_noNLnoPx $v_COL_ID_yellow
+f_lib_print "drei." $v_LIBPRT_onNLnoPx $v_COL_ID_blue
+
+#
+#   =*= :01 if - then - else - fi
+#
+
+f_lib_menu "if" $LINENO
+
+#   long version
+f_lib_submenu "if-else-fi:long" $LINENO
+a=1
+if [ $a == 1 ]
+then
+    echo "a==1"
+else
+    echo "a is not 1"
+fi
+
+#   short version
+f_lib_submenu "if-else-fi:short" $LINENO
+f_lib_random 10; x=$?
+echo "x:<$x>"
+if [ $x == 5 ] || [ $x -gt 1 ]
+    then echo "x==2 or >1"
+    else echo "x not found"
+fi
+
+#
+#   =*= :02 case
+#
+
+f_lib_menu "case" $LINENO
+
+#
+#   =*= :number-test
+#
+
+f_lib_submenu "test a number" $LINENO
+
+f_lib_print "testing directly" $v_LIBPRT_onNLonPx
+
+function f_tmp_testNumber {
+    f_lib_print "${FUNCNAME[0]}('$1'):" $v_LIBPRT_noNLonPx
+    case $1 in
+        [1-3])
+            f_lib_print ":between 1 and 3"
+        ;;
+        [4-8])
+            f_lib_print ":between 4 and 8"
+        ;;
+        *)
+            f_lib_print "default"
+        ;;
+    esac
+}
+
+#   fetch a number
+n=10; f_lib_random $n; i=$?;
+f_tmp_testNumber $i; sleep 1
+f_lib_random $n; i=$?
+f_tmp_testNumber "$i"
+
+#
+#   =*= :name-test or string-test
+#
+
+f_lib_submenu "test a fixed name" $LINENO
+
+function f_tmp_testName {
+    f_lib_print "${FUNCNAME[0]}('$1'):" $v_LIBPRT_noNLonPx
+    case $1 in
+        'Luke')
+            f_lib_print "'first name'"
+        ;;
+        'Skywalker')
+            f_lib_print "'second name'"
+        ;;
+        *)
+            f_lib_print "'?:unknown name'"
+        ;;
+    esac
+}
+
+f_tmp_testName 'Luke'
+f_tmp_testName 'Skywalker'
+f_tmp_testName 'Darth'
+
+#
+#   =*= :character-test
+#
+
+f_lib_submenu "test a char" $LINENO
+
+function f_tmp_testChar {
+    f_lib_print "${FUNCNAME[0]}('$1'):" $v_LIBPRT_noNLonPx
+    case $1 in
+        [a-j]*)
+            f_lib_print "'lowcase letter:a-j'"
+        ;;
+        [A-J]*)
+            f_lib_print "'upper letter:A-J'"
+        ;;
+        [A-Za-z]*)
+            f_lib_print "'letters'"
+        ;;
+        [0-9]*)
+            f_lib_print "'digits'"
+        ;;
+        [+*-/]*)
+            f_lib_print "'arithmmetics'"
+        ;;
+        *)
+            f_lib_print "'any chars'"
+        ;;
+    esac
+}
+
+# only the first char is relevant
+f_tmp_testChar 'abc'  #  letter
+f_tmp_testChar 'AbC'    # letter - nocase
+f_tmp_testChar '123'    # digits
+f_tmp_testChar '+'      # arithmentics
+f_tmp_testChar '/'      # arithmentics
+f_tmp_testChar '!'      # any
+
+#
+#   =*= :03 for
+#
+
+f_lib_menu "for" $LINENO
+
+#  by sequence
+f_lib_submenu "by sequence1" $LINENO
+i=1
+n=3
+f_lib_print "for FROM:<$i> TO:<$n> is:[" $v_LIBPRT_noNLonPx
+for x in `seq $i $n`;
+do
+    f_lib_print "[$i/$n]:$x;" $v_LIBPRT_noNLnoPx $v_COL_ID_red
+    i+=1
+done
+f_lib_print "]." $v_LIBPRT_onNLnoPx
+
+#  by range
+f_lib_submenu "by range" $LINENO
+aShl=( "bash" "shell" "ksh" )
+i=1
+n=${#aShl[@]};
+for x in "${aShl[@]}"
+do
+    f_lib_print "[$i/$n]:$x;" $v_LIBPRT_noNLnoPx $v_COL_ID_red
+    i+=1
+done
+f_lib_print "." $v_LIBPRT_onNLnoPx
+
+#  by char
+f_lib_submenu "by string range" $LINENO
+s="abcdefgh"
+i=1
+n=${#s}
+for x in $s
+do
+    f_lib_print "[$i/$n]:$x;" $v_LIBPRT_noNLnoPx $v_COL_ID_red
+    i+=1
+done
+f_lib_print "." $v_LIBPRT_onNLnoPx
+
+#  by For Loop to iterate over an Array c-for
+f_lib_submenu "by forC" $LINENO
+aCar=( "audi" "mercedes" "toyota" "honda" )
+n=${#aCar[@]}
+for (( i=1; i < ${n}+1; i++ ));
+do
+    f_lib_puts "[$i/$n]:${aCar[$i-1]}"  $v_COL_ID_red
+done
+
+#   for loop that iterates over each element in arr - using break
+f_lib_submenu "using break" $LINENO
+aScp=( "bash" "shell" "script" "language" )
+declare -p aScp
+f_lib_print "for <x> in aScp :{" $v_LIBPRT_noNLonPx
+i=0
+n=${#aScp[@]}-1
+for x in "${aScp[@]}"
+do
+    f_lib_print "[$i/$n]:${x};" $v_LIBPRT_noNLnoPx $v_COL_ID_red
+    # break for loop based on a condition
+    if [ $x == "script" ]; then
+        break
+    fi
+    i+=1
+done
+f_lib_print "} ." $v_LIBPRT_onNLnoPx
+
+#
+#   =*= :04 while
+#
+
+f_lib_menu "while" $LINENO
+
+#   simple while loop
+f_lib_submenu "Example of bash while loop" $LINENO
+i=0;n=3
+f_lib_print "while <i>=$i -lt <$n> ...:{" $v_LIBPRT_noNLonPx
+while [ $i -lt $n ]; do
+   f_lib_print "[$i];" $v_LIBPRT_noNLnoPx $v_COL_ID_red
+   let i++
+done
+f_lib_print "} ." $v_LIBPRT_onNLnoPx
+
+#   double while
+f_lib_submenu "multiple conditions in expression" $LINENO
+i=0;j=0;n=4;m=9
+f_lib_print "while <i>=$i -lt <$n> && <j>=$j -lt <$m>...:{" $v_LIBPRT_noNLonPx
+while [[ $i -lt $n && $j -lt $m ]]; do
+   f_lib_print "[$i/$j];" $v_LIBPRT_noNLnoPx $v_COL_ID_red
+#  f_lib_puts "[$i/$j/$n]"  $v_COL_ID_red
+   let i++
+   let j+=2
+done
+f_lib_print "} ." $v_LIBPRT_onNLnoPx
+
+#
+#   =*= :05 until
+#
+
+f_lib_menu "until" $LINENO
+n=5; i=10
+f_lib_print "until <$i> -lt <$n> ...:{" $v_LIBPRT_noNLonPx
+until [ $i -lt $n ]; do
+   f_lib_print "[$i/$n];" $v_LIBPRT_noNLnoPx $v_COL_ID_red
+   let i--
+done
+f_lib_print "} ." $v_LIBPRT_onNLnoPx
+
+#   =*= :   footer
+
+f_lib_footer "$v_SCP" $LINENO $v_iRc $v_iEc
