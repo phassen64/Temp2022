@@ -10,7 +10,7 @@
 
 int main(void) 
 {
-    int     i=7,j=0;                 
+    int     i=9,j=0;                 
     int     x=4,y=8,z=1;
 
 
