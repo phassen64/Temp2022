@@ -23,7 +23,7 @@ $m.f_thm("define strings")
 $m.f_inf("InfoTest readable?") # DOS>set v_VERBOSE=true
 
 sLetter     = "ABCDEFGHIJ"
-sText       = "Oliver Kahn steht im Tor!"
+sText       = "Oliver  Kahn nicht steht im Tor!"
 $m.f_puts("use sLetter   : '#{sLetter}'")
 $m.f_puts("use sText     : '#{sText }'")
 s = 'Hello, I am a defined in 2:'\
